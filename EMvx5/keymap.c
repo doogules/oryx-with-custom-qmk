@@ -108,7 +108,7 @@ bool rgb_matrix_indicators_user(void) {
 static uint32_t key_timer = 0;
 
 bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode, keyrecord_t *record) {
-    return timer_elapsed32(key_timer) > 1000;
+    return timer_elapsed32(key_timer) > 10000;
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
