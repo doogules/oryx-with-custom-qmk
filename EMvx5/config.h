@@ -9,6 +9,7 @@
 #define SERIAL_NUMBER "EMvx5/nQwbW"
 #define LAYER_STATE_8BIT
 #define COMBO_COUNT 7
+#define COMBO_SHOULD_TRIGGER
 
 #define RGB_MATRIX_STARTUP_SPD 60
 
