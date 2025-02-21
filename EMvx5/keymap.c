@@ -124,8 +124,9 @@ bool is_key_in_list(uint16_t keycode) {
 
 bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode, keyrecord_t *record) {
     // only enable combos if keyboard is idle
-    return false;
+    return idle_timer == 0;
 }
+
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // check if timer reset is needed
