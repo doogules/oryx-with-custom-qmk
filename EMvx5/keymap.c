@@ -100,42 +100,21 @@ bool rgb_matrix_indicators_user(void) {
   return true;
 }
 
-// list of keys for timer to ignore
-const uint16_t idle_timer_ignore_list[] = {
-    KC_ENT, KC_ESC, KC_TAB, KC_BSPC, KC_LCTL, KC_LSFT, KC_LALT, KC_LGUI, KC_UNDS, KC_COLN, KC_EQL, KC_EXLM, KC_SLSH
-};
-
-// function to check if a keycode is in the list
-bool is_key_in_list(uint16_t keycode) {
-    for (size_t i = 0; i < sizeof(idle_timer_ignore_list) / sizeof(idle_timer_ignore_list[0]); i++) {
-        if (keycode == idle_timer_ignore_list[i]) {
-            return true;
-        }
-    }
-    return false;
-}
-
-static uint16_t idle_timer = 0;
-
-void matrix_scan_user(void) {
+static uint16_t idle_timer = 0; void matrix_scan_user(void) {
     if (idle_timer && timer_expired(timer_read(), idle_timer)) {
     // keyboard is idle
         idle_timer = 0;
     }
 }
-
-#define IDLE_TIMEOUT_MS 5000
-
-bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode, keyrecord_t *record) {
-    // only enable combos if keyboard is idle
-    return idle_timer == 0;
-}
+define IDLE_TIMEOUT_MS 100
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  // check if timer reset is needed
-  if (!is_key_in_list(keycode)) {
-      idle_timer = (record->event.time + IDLE_TIMEOUT_MS) | 1;
-  }
+    // check if timer reset is needed
+    if (is_key_in_list(keycode)) {
+        // if key is in the list, then the idle state remains
+    } else {
+        idle_timer = (record->event.time + IDLE_TIMEOUT_MS) | 1;
+    }
 
   switch (keycode) {
 
@@ -164,4 +143,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       return false;
   }
   return true;
+}
+
+// list of keys for timer to ignore
+const uint16_t idle_timer_ignore_list[] = {
+    KC_ENT, KC_ESC, KC_TAB, KC_BSPC, KC_DEL, KC_LPRN, KC_RPRN, KC_LBRC, KC_RBRC, KC_LCTL, KC_LSFT, KC_LALT
+};
+// function to check if a keycode is in the list
+bool is_key_in_list(uint16_t keycode) {
+    for (size_t i = 0; i < sizeof(idle_timer_ignore_list) / sizeof(idle_timer_ignore_list[0]); i++) {
+        if (keycode == idle_timer_ignore_list[i]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode, keyrecord_t *record) {
+    // only enable combos if keyboard is idle
+    return idle_timer == 0;
 }
