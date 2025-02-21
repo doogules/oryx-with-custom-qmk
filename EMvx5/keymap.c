@@ -108,6 +108,25 @@ static uint16_t idle_timer = 0; void matrix_scan_user(void) {
 }
 #define IDLE_TIMEOUT_MS 100
 
+// list of keys for timer to ignore
+const uint16_t idle_timer_ignore_list[] = {
+    KC_ENT, KC_ESC, KC_TAB, KC_BSPC, KC_DEL, KC_LPRN, KC_RPRN, KC_LBRC, KC_RBRC, KC_LCTL, KC_LSFT, KC_LALT
+};
+// function to check if a keycode is in the list
+bool is_key_in_list(uint16_t keycode) {
+    for (size_t i = 0; i < sizeof(idle_timer_ignore_list) / sizeof(idle_timer_ignore_list[0]); i++) {
+        if (keycode == idle_timer_ignore_list[i]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode, keyrecord_t *record) {
+    // only enable combos if keyboard is idle
+    return idle_timer == 0;
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // check if timer reset is needed
     if (is_key_in_list(keycode)) {
@@ -143,23 +162,4 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       return false;
   }
   return true;
-}
-
-// list of keys for timer to ignore
-const uint16_t idle_timer_ignore_list[] = {
-    KC_ENT, KC_ESC, KC_TAB, KC_BSPC, KC_DEL, KC_LPRN, KC_RPRN, KC_LBRC, KC_RBRC, KC_LCTL, KC_LSFT, KC_LALT
-};
-// function to check if a keycode is in the list
-bool is_key_in_list(uint16_t keycode) {
-    for (size_t i = 0; i < sizeof(idle_timer_ignore_list) / sizeof(idle_timer_ignore_list[0]); i++) {
-        if (keycode == idle_timer_ignore_list[i]) {
-            return true;
-        }
-    }
-    return false;
-}
-
-bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode, keyrecord_t *record) {
-    // only enable combos if keyboard is idle
-    return idle_timer == 0;
 }
