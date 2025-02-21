@@ -129,7 +129,7 @@ void matrix_scan_user(void) {
     }
 }
 
-define IDLE_TIMEOUT_MS 5000
+#define IDLE_TIMEOUT_MS 5000;
 
 bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode, keyrecord_t *record) {
     // only enable combos if keyboard is idle
