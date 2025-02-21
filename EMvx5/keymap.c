@@ -106,7 +106,7 @@ static uint16_t idle_timer = 0; void matrix_scan_user(void) {
         idle_timer = 0;
     }
 }
-define IDLE_TIMEOUT_MS 100
+#define IDLE_TIMEOUT_MS 100
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // check if timer reset is needed
