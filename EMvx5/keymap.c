@@ -14,17 +14,17 @@ enum custom_keycodes {
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
-    KC_GRAVE,       KC_F12,         KC_MEDIA_PLAY_PAUSE,KC_AUDIO_MUTE,  KC_AUDIO_VOL_DOWN,KC_AUDIO_VOL_UP,                                KC_BRIGHTNESS_DOWN,KC_BRIGHTNESS_UP,KC_PSCR,        TG(2),          KC_DELETE,      KC_BSLS,        
-    KC_LEFT_GUI,    KC_Q,           KC_W,           KC_E,           KC_R,           KC_T,                                           KC_Y,           KC_U,           KC_I,           KC_O,           KC_P,           KC_SCLN,        
-    KC_LEFT_ALT,    KC_A,           KC_S,           KC_D,           KC_F,           KC_G,                                           KC_H,           KC_J,           KC_K,           KC_L,           KC_BSPC,        KC_QUOTE,       
-    KC_LEFT_CTRL,   KC_Z,           KC_X,           KC_C,           KC_V,           KC_B,                                           KC_N,           KC_M,           KC_COMMA,       KC_DOT,         KC_MINUS,       KC_QUES,        
+    KC_GRAVE,       KC_F12,         KC_MEDIA_PLAY_PAUSE,KC_AUDIO_MUTE,  KC_AUDIO_VOL_DOWN,KC_AUDIO_VOL_UP,                                KC_BRIGHTNESS_DOWN,KC_BRIGHTNESS_UP,KC_PSCR,        TG(2),          KC_DELETE,      KC_BSLS,
+    KC_LEFT_GUI,    KC_Q,           KC_W,           KC_E,           KC_R,           KC_T,                                           KC_Y,           KC_U,           KC_I,           KC_O,           KC_P,           KC_SCLN,
+    KC_LEFT_ALT,    KC_A,           KC_S,           KC_D,           KC_F,           KC_G,                                           KC_H,           KC_J,           KC_K,           KC_L,           KC_BSPC,        KC_QUOTE,
+    KC_LEFT_CTRL,   KC_Z,           KC_X,           KC_C,           KC_V,           KC_B,                                           KC_N,           KC_M,           KC_COMMA,       KC_DOT,         KC_MINUS,       KC_QUES,
                                                     KC_LEFT_SHIFT,  MO(1),                                          KC_ENTER,       KC_SPACE
   ),
   [1] = LAYOUT_voyager(
-    KC_TILD,        KC_F1,          KC_F2,          KC_F3,          KC_F4,          KC_F5,                                          KC_F6,          KC_F7,          KC_F8,          KC_F9,          KC_F10,         KC_PIPE,        
-    KC_TRANSPARENT, KC_PAGE_UP,     KC_7,           KC_8,           KC_9,           KC_LBRC,                                        KC_RBRC,        KC_HOME,        KC_UP,          KC_END,         KC_TRANSPARENT, KC_COLN,        
-    KC_TRANSPARENT, KC_0,           KC_4,           KC_5,           KC_6,           KC_LPRN,                                        KC_RPRN,        KC_LEFT,        KC_DOWN,        KC_RIGHT,       KC_TRANSPARENT, KC_DQUO,        
-    KC_TRANSPARENT, KC_PGDN,        KC_1,           KC_2,           KC_3,           KC_LCBR,                                        KC_RCBR,        KC_PLUS,        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
+    KC_TILD,        KC_F1,          KC_F2,          KC_F3,          KC_F4,          KC_F5,                                          KC_F6,          KC_F7,          KC_F8,          KC_F9,          KC_F10,         KC_PIPE,
+    KC_TRANSPARENT, KC_PAGE_UP,     KC_7,           KC_8,           KC_9,           KC_LBRC,                                        KC_RBRC,        KC_HOME,        KC_UP,          KC_END,         KC_TRANSPARENT, KC_COLN,
+    KC_TRANSPARENT, KC_0,           KC_4,           KC_5,           KC_6,           KC_LPRN,                                        KC_RPRN,        KC_LEFT,        KC_DOWN,        KC_RIGHT,       KC_TRANSPARENT, KC_DQUO,
+    KC_TRANSPARENT, KC_PGDN,        KC_1,           KC_2,           KC_3,           KC_LCBR,                                        KC_RCBR,        KC_PLUS,        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
                                                     KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT
   ),
   [2] = LAYOUT_voyager(
@@ -98,7 +98,40 @@ bool rgb_matrix_indicators_user(void) {
   return true;
 }
 
+static uint16_t idle_timer = 0;
+
+void matrix_scan_user(void) {
+    if (idle_timer && timer_expired(timer_read(), idle_timer)) {
+    // keyboard is idle
+        idle_timer = 0;
+    }
+}
+
+// list of keys for timer to ignore
+const uint16_t idle_timer_ignore_list[] = {
+    KC_ENT, KC_ESC, KC_TAB, KC_BSPC, KC_LCTL, KC_LSFT, KC_LALT, KC_LGUI, KC_UNDS, KC_COLN, KC_EQL, KC_EXLM, KC_SLSH
+};
+// function to check if a keycode is in the list
+bool is_key_in_list(uint16_t keycode) {
+    for (size_t i = 0; i < sizeof(idle_timer_ignore_list) / sizeof(idle_timer_ignore_list[0]); i++) {
+        if (keycode == idle_timer_ignore_list[i]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode, keyrecord_t *record) {
+    // only enable combos if keyboard is idle
+    return idle_timer == 0;
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+
+  if (!is_key_in_list(keycode)) {  // combo timer
+    idle_timer = (record->event.time + IDLE_TIMEOUT_MS) | 1;
+  }
+
   switch (keycode) {
 
     case RGB_SLD:
