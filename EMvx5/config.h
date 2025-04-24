@@ -5,7 +5,7 @@ Set any config.h overrides for your specific keymap here.
 #define COMBO_TERM 45
 
 #define USB_SUSPEND_WAKEUP_DELAY 0
-#define SERIAL_NUMBER "EMvx5/yoEoBn"
+#define SERIAL_NUMBER "EMvx5/YnWERa"
 #define LAYER_STATE_8BIT
 #define COMBO_COUNT 6
 #define COMBO_SHOULD_TRIGGER
