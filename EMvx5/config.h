@@ -9,7 +9,7 @@ Set any config.h overrides for your specific keymap here.
 #define LAYER_STATE_8BIT
 #define COMBO_COUNT 6
 #define COMBO_SHOULD_TRIGGER
-#define IDLE_TIMEOUT_MS 120
+#define IDLE_TIMEOUT_MS 150
 
 #define RGB_MATRIX_STARTUP_SPD 60
 
