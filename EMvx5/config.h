@@ -1,9 +1,9 @@
 #define COMBO_TERM 45
 
 #define USB_SUSPEND_WAKEUP_DELAY 0
-#define SERIAL_NUMBER "EMvx5/yoEoBn"
+#define SERIAL_NUMBER "EMvx5/5W3B5e"
 #define LAYER_STATE_8BIT
-#define COMBO_COUNT 6
+#define COMBO_COUNT 7
 
 #define RGB_MATRIX_STARTUP_SPD 60
 
